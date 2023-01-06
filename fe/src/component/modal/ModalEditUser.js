@@ -1,7 +1,11 @@
-import { Button, Col, Input, Modal, Row } from "antd";
+import { Button, Col, Modal, Row } from "antd";
 import { Typography } from 'antd';
 import { editUser } from "../../api/api";
-import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { Formik, Form, Field } from 'formik';
+import * as Yup from 'yup';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import _ from 'lodash'
 const { Text } = Typography;
 export const ModalEditUser = ({ show, close, rawData, editSuccess }) => {
 
@@ -16,34 +20,53 @@ export const ModalEditUser = ({ show, close, rawData, editSuccess }) => {
         position: rawData?.position
     }
 
-    const save = async (e) => {
+    const save = async (e, resetForm) => {
         let result = await editUser(e)
-        if (result) {
+        if (result.status === 'OK') {
             editSuccess()
+            resetForm()
+        } else {
+            toast(result.message);
         }
+
     }
     return (
         <Formik
             enableReinitialize
             initialValues={initialValues}
-            onSubmit={(values, { setSubmitting }) => {
-                setTimeout(() => {
-                    alert(JSON.stringify(values, null, 2));
-                    setSubmitting(false);
-                }, 400);
-            }}
+            validationSchema={Yup.object().shape({
+                email: Yup.string()
+                    .email()
+                    .required("Email not blank"),
+                password: Yup.string()
+                    .required("Password not blank"),
+                firstName: Yup.string()
+                    .required("First name not blank")
+            })}
         >
-            {({ isSubmitting, values, onChange, setFieldValue }) => (
+            {({ resetForm, values, errors, touched, setFieldValue, handleSubmit }) => (
                 <Modal
                     open={show}
-                    title="Create user"
+                    title="Edit user"
                     keyboard={false}
                     closable={false}
                     footer={[
-                        <Button onClick={e => save(values)} type="primary">
+                        <Button onClick={e => {
+                            handleSubmit()
+                            if (!_.isEmpty(errors)) {
+                                toast("Validation error");
+                                return;
+                            }
+                            save(values, resetForm)
+                        }} type="primary">
                             Save
                         </Button>,
-                        <Button onClick={close} type="primary">
+                        <Button
+                            onClick={() => {
+                                resetForm()
+                                close()
+                            }}
+                            type="primary">
                             Cancel
                         </Button>
                     ]}
@@ -58,6 +81,9 @@ export const ModalEditUser = ({ show, close, rawData, editSuccess }) => {
                                     value={values?.email}
                                     onChange={e => setFieldValue('email', e.currentTarget.value)}
                                 />
+                                {errors.email && touched.email && (
+                                    <div className="input-feedback" style={{ color: 'red' }}>{errors.email}</div>
+                                )}
                             </Col>
                         </Row>
                         <Row>
@@ -67,6 +93,9 @@ export const ModalEditUser = ({ show, close, rawData, editSuccess }) => {
                                     value={values?.password}
                                     onChange={e => setFieldValue('password', e.currentTarget.value)}
                                 />
+                                {errors.password && touched.password && (
+                                    <div className="input-feedback" style={{ color: 'red' }}>{errors.password}</div>
+                                )}
                             </Col>
                         </Row>
                         <Row>
@@ -76,6 +105,9 @@ export const ModalEditUser = ({ show, close, rawData, editSuccess }) => {
                                     value={values?.firstName}
                                     onChange={e => setFieldValue('firstName', e.currentTarget.value)}
                                 />
+                                {errors.firstName && touched.firstName && (
+                                    <div className="input-feedback" style={{ color: 'red' }}>{errors.firstName}</div>
+                                )}
                             </Col>
                         </Row>
                         <Row>

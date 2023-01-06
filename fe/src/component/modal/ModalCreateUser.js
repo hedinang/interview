@@ -2,53 +2,70 @@ import { Button, Col, Modal, Row } from "antd";
 import { Typography } from 'antd';
 import { createUser } from "../../api/api";
 import { Formik, Form, Field } from 'formik';
+import * as Yup from 'yup';
+import _ from 'lodash'
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const { Text } = Typography;
+const initialValues = {
+    email: '',
+    password: '',
+    firstName: '',
+    lastName: '',
+    country: '',
+    phoneNumber: '',
+    position: ''
+}
 export const ModalCreateUser = ({ show, close, addSuccess }) => {
-    const initialValues = {
-        email: '',
-        password: '',
-        firstName: '',
-        lastName: '',
-        country: '',
-        phoneNumber: '',
-        position: ''
+
+    const save = async (e, resetForm) => {
+        let result = await createUser(e)
+        if (result.status === 'OK') {
+            resetForm()
+            addSuccess()
+        } else {
+            toast("Error");
+        }
     }
 
-    const save = async (e) => {
-        let result = await createUser(e)
-        if (result) {
-            addSuccess()
-        }
-    }
-    const validateEmail = value => {
-        let errorMessage;
-        if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)) {
-            errorMessage = 'Invalid email address';
-        }
-        return errorMessage;
-    };
     return (
         <Formik
-            enableReinitialize={true}
+            enableReinitialize
             initialValues={initialValues}
-            onSubmit={(values, { setSubmitting }) => {
-                setTimeout(() => {
-                    alert(JSON.stringify(values, null, 2));
-                    setSubmitting(false);
-                }, 400);
-            }}
+            validationSchema={Yup.object().shape({
+                email: Yup.string()
+                    .email()
+                    .required("Email not blank"),
+                password: Yup.string()
+                    .required("Password not blank"),
+                firstName: Yup.string()
+                    .required("First name not blank")
+            })
+            }
         >
-            {({ values, setFieldValue }) => (
+            {({ values, setFieldValue, errors, touched, handleSubmit, resetForm }) => (
                 <Modal
                     open={show}
                     title="Create user"
                     keyboard={false}
                     closable={false}
                     footer={[
-                        <Button onClick={e => save(values)} type="primary">
+                        <Button onClick={e => {
+                            handleSubmit()
+                            if (!_.isEmpty(errors)) {
+                                toast("Validation error");
+                                return;
+                            }
+                            save(values, resetForm)
+                        }} type="primary">
                             Save
                         </Button>,
-                        <Button onClick={close} type="primary">
+                        <Button
+                            onClick={() => {
+                                resetForm()
+                                close()
+                            }}
+                            type="primary">
                             Cancel
                         </Button>
                     ]}
@@ -56,14 +73,18 @@ export const ModalCreateUser = ({ show, close, addSuccess }) => {
                 >
 
                     <Form>
+
                         <Row>
                             <Col span={7} ><Text strong> Email:</Text></Col>
                             <Col span={17} >
                                 <Field
-                                    validate={validateEmail}
+
                                     value={values?.email}
                                     onChange={e => setFieldValue('email', e.currentTarget.value)}
                                 />
+                                {errors.email && touched.email && (
+                                    <div className="input-feedback" style={{ color: 'red' }}>{errors.email}</div>
+                                )}
                             </Col>
                         </Row>
                         <Row>
@@ -73,6 +94,9 @@ export const ModalCreateUser = ({ show, close, addSuccess }) => {
                                     value={values?.password}
                                     onChange={e => setFieldValue('password', e.currentTarget.value)}
                                 />
+                                {errors.password && touched.password && (
+                                    <div className="input-feedback">{errors.password}</div>
+                                )}
                             </Col>
                         </Row>
                         <Row>
@@ -82,6 +106,9 @@ export const ModalCreateUser = ({ show, close, addSuccess }) => {
                                     value={values?.firstName}
                                     onChange={e => setFieldValue('firstName', e.currentTarget.value)}
                                 />
+                                {errors.firstName && touched.firstName && (
+                                    <div className="input-feedback">{errors.firstName}</div>
+                                )}
                             </Col>
                         </Row>
                         <Row>
@@ -114,6 +141,7 @@ export const ModalCreateUser = ({ show, close, addSuccess }) => {
                             /></Col>
                         </Row>
                     </Form>
+
                 </Modal>
             )}
         </Formik>

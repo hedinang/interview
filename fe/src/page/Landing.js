@@ -7,6 +7,8 @@ import { allUser } from "../api/api";
 import { EditOutlined, DeleteOutlined, UserAddOutlined } from '@ant-design/icons';
 import "../scss/style.scss";
 import { ModalCreateUser } from "../component/modal/ModalCreateUser";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Landing = () => {
     const [showEdit, setShowEdit] = useState(false);
@@ -49,18 +51,21 @@ const Landing = () => {
 
     const addSuccess = async () => {
         setShowCreate(false)
+        toast("Success");
         let rawData = await allUser()
         if (rawData)
             setData(rawData.data)
     }
     const editSuccess = async () => {
         setShowEdit(false)
+        toast("Success");
         let rawData = await allUser()
         if (rawData)
             setData(rawData.data)
     }
     const deleteSuccess = async () => {
         setShowDelete(false)
+        toast("Success");
         let rawData = await allUser()
         if (rawData)
             setData(rawData.data)
@@ -158,6 +163,7 @@ const Landing = () => {
             <ModalEditUser show={showEdit} close={closeEdit} rawData={dataEdit} editSuccess={editSuccess} />
             <ModalDeleteUser show={showDelete} close={closeDelete} data={dataDelete} deleteSuccess={deleteSuccess} />
             <ModalCreateUser show={showCreate} close={closeCreate} data={dataCreate} addSuccess={addSuccess} />
+
         </>
 
     )

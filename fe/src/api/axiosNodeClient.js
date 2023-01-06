@@ -1,22 +1,11 @@
 import axios from 'axios';
-import queryString from 'query-string';
 
 const axiosClient = axios.create({
   baseURL: process.env.API_NODE_URL,
   headers: {
     'content-type': 'application/json',
   },
-  // paramsSerializer: (params) => queryString.stringify(params),
 });
-
-// axiosClient.interceptors.request.use(async (config: any) => {
-//   let token = getLocalToken();
-//   if (token) {
-//     config.headers.Authorization = `Bearer ${token}`;
-//   }
-
-//   return config;
-// });
 
 axiosClient.interceptors.response.use(
   (response) => {
@@ -29,12 +18,5 @@ axiosClient.interceptors.response.use(
     throw error;
   }
 );
-
-getLocalToken();
-
-function getLocalToken() {
-  const token = window.localStorage.getItem("iddToken");
-  return token;
-}
 
 export default axiosClient;

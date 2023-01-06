@@ -2,6 +2,7 @@ import { Layout } from 'antd';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import Sidebar from './component/Sidebar';
 import { Landing } from './page/Landing';
+import './scss/style.scss'
 
 
 function App() {

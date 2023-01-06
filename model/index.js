@@ -6,19 +6,15 @@ const { Sequelize } = require('sequelize');
 //     password: "daniel1995",
 //     host: "localhost",
 //     port: 5432,
-//     dialect: "postgres",
-//     ssl: false
-
+//     dialect: "postgres"
 // });
 const connection = new Sequelize({
     database: "thm_database",
     username: "thminsight",
     password: "coding_test_password",
-    host: "localhost",
+    host: "database",
     port: 5432,
-    dialect: "postgres",
-    ssl: false
-
+    dialect: "postgres"
 });
 
 connection.authenticate().then(e => {
