@@ -6,3 +6,7 @@ How to run system:
 How to use:
 1. Go to website as google chrome
 2. Go to url: http://localhost:3000
+
+Answer:
+    Q1: 3: relevant
+    Q2: 2: quite easy but long because have to work both be and fe and test
