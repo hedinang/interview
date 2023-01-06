@@ -47,6 +47,24 @@ const Landing = () => {
         setShowCreate(true)
     }
 
+    const addSuccess = async () => {
+        setShowCreate(false)
+        let rawData = await allUser()
+        if (rawData)
+            setData(rawData.data)
+    }
+    const editSuccess = async () => {
+        setShowEdit(false)
+        let rawData = await allUser()
+        if (rawData)
+            setData(rawData.data)
+    }
+    const deleteSuccess = async () => {
+        setShowDelete(false)
+        let rawData = await allUser()
+        if (rawData)
+            setData(rawData.data)
+    }
 
     const columns = [
         {
@@ -137,9 +155,9 @@ const Landing = () => {
                     </Col>
                 </Row>
             </Content>
-            <ModalEditUser show={showEdit} close={closeEdit} rawData={dataEdit} />
-            <ModalDeleteUser show={showDelete} close={closeDelete} data={dataDelete} />
-            <ModalCreateUser show={showCreate} close={closeCreate} data={dataCreate} />
+            <ModalEditUser show={showEdit} close={closeEdit} rawData={dataEdit} editSuccess={editSuccess} />
+            <ModalDeleteUser show={showDelete} close={closeDelete} data={dataDelete} deleteSuccess={deleteSuccess} />
+            <ModalCreateUser show={showCreate} close={closeCreate} data={dataCreate} addSuccess={addSuccess} />
         </>
 
     )

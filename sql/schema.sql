@@ -12,7 +12,7 @@ CREATE TABLE users (
   city TEXT,
   phone_number TEXT,
   position TEXT,
-  company_id INTEGER
+  company_id INTEGER,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );

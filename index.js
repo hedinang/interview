@@ -25,11 +25,6 @@ app.use(
 );
 
 app.get('/health', (req, res) => res.send({ message: 'ok' }));
-
-// app.use(bodyParser.json());
-// app.use(cors({
-//   origin: '*'
-// }));
 _.each(routerList, function (routerConfig) {
   _.map(routerConfig, function (value, key) {
     app.use(key, require(value));

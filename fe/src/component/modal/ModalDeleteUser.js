@@ -1,7 +1,14 @@
 import { Button, Modal } from "antd";
 import { Typography } from 'antd';
+import { deleteUser } from "../../api/api";
 const { Text } = Typography;
-export const ModalDeleteUser = ({ show, close, data }) => {
+export const ModalDeleteUser = ({ show, close, data, deleteSuccess }) => {
+    const remove = async () => {
+        const result = await deleteUser(data.id)
+        if (result) {
+            deleteSuccess()
+        }
+    }
     return (
         <Modal
             open={show}
@@ -9,7 +16,7 @@ export const ModalDeleteUser = ({ show, close, data }) => {
             keyboard={false}
             closable={false}
             footer={[
-                <Button onClick={close} type="primary">
+                <Button onClick={remove} type="primary">
                     Allow
                 </Button>,
                 <Button onClick={close} type="primary">
