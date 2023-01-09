@@ -6,7 +6,7 @@ export const ModalDeleteUser = ({ show, close, data, deleteSuccess }) => {
     const remove = async () => {
         const result = await deleteUser(data.id)
         if (result) {
-            deleteSuccess()
+            deleteSuccess('delete', data.email)
         }
     }
     return (

@@ -50,7 +50,7 @@ async function createUser(data) {
 async function updateUser(data) {
     let apiResponse = {}
     try {
-        await User.update({
+        let result = await User.update({
             email: data.email,
             password: data.password,
             first_name: data.firstName,
@@ -65,6 +65,7 @@ async function updateUser(data) {
                 id: data.id
             }
         })
+        apiResponse.data = data
         apiResponse.status = 'OK'
     } catch (error) {
         apiResponse.message = 'Update data wrong'

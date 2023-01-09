@@ -1,4 +1,4 @@
-import { Col, Row, Table } from "antd"
+import { Col, Row, Table, notification, Space, Button } from "antd"
 import { Content } from "antd/es/layout/layout"
 import { useEffect, useState } from "react";
 import { ModalEditUser } from "../component/modal/ModalEditUser";
@@ -7,8 +7,6 @@ import { allUser } from "../api/api";
 import { EditOutlined, DeleteOutlined, UserAddOutlined } from '@ant-design/icons';
 import "../scss/style.scss";
 import { ModalCreateUser } from "../component/modal/ModalCreateUser";
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 const Landing = () => {
     const [showEdit, setShowEdit] = useState(false);
@@ -18,6 +16,26 @@ const Landing = () => {
     const [dataEdit, setDataEdit] = useState()
     const [dataCreate, setDataCreate] = useState()
     const [data, setData] = useState([])
+    const [api, contextHolder] = notification.useNotification();
+    const btn = (
+        <Space>
+            <Button type="primary" size="small" onClick={() => api.destroy()}>
+                I understand
+            </Button>
+            <Button type="primary" size="small" onClick={() => api.destroy()}>
+                Cancel
+            </Button>
+        </Space>
+    )
+    const openNotification = (type, email) => {
+        api.open({
+            message: 'Success!',
+            description: 'Successfully ' + type + ' for email: ' + email,
+            duration: 10,
+            placement: 'topRight',
+            btn
+        })
+    }
     useEffect(() => {
         const fetchdata = async () => {
             let rawData = await allUser()
@@ -49,23 +67,24 @@ const Landing = () => {
         setShowCreate(true)
     }
 
-    const addSuccess = async () => {
+    const addSuccess = async (type, email) => {
         setShowCreate(false)
-        toast("Success");
+        openNotification(type, email)
+
         let rawData = await allUser()
         if (rawData)
             setData(rawData.data)
     }
-    const editSuccess = async () => {
+    const editSuccess = async (type, email) => {
         setShowEdit(false)
-        toast("Success");
+        openNotification(type, email)
         let rawData = await allUser()
         if (rawData)
             setData(rawData.data)
     }
-    const deleteSuccess = async () => {
+    const deleteSuccess = async (type, email) => {
         setShowDelete(false)
-        toast("Success");
+        openNotification(type, email);
         let rawData = await allUser()
         if (rawData)
             setData(rawData.data)
@@ -163,7 +182,7 @@ const Landing = () => {
             <ModalEditUser show={showEdit} close={closeEdit} rawData={dataEdit} editSuccess={editSuccess} />
             <ModalDeleteUser show={showDelete} close={closeDelete} data={dataDelete} deleteSuccess={deleteSuccess} />
             <ModalCreateUser show={showCreate} close={closeCreate} data={dataCreate} addSuccess={addSuccess} />
-
+            {contextHolder}
         </>
 
     )

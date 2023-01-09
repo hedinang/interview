@@ -1,13 +1,30 @@
-import { Button, Col, Modal, Row } from "antd";
-import { Typography } from 'antd';
+import { Button, Col, Modal, Row, Typography, notification, Space } from "antd";
 import { editUser } from "../../api/api";
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import _ from 'lodash'
 const { Text } = Typography;
 export const ModalEditUser = ({ show, close, rawData, editSuccess }) => {
+    const [api, contextHolder] = notification.useNotification();
+    const btn = (
+        <Space>
+            <Button type="primary" size="small" onClick={() => api.destroy()}>
+                I understand
+            </Button>
+            <Button type="primary" size="small" onClick={() => api.destroy()}>
+                Cancel
+            </Button>
+        </Space>
+    )
+    const openNotification = () => {
+        api.open({
+            message: 'Error!',
+            description: 'Validate wrong',
+            duration: 10,
+            placement: 'topRight',
+            btn
+        })
+    }
 
     const initialValues = {
         id: rawData?.id,
@@ -23,10 +40,10 @@ export const ModalEditUser = ({ show, close, rawData, editSuccess }) => {
     const save = async (e, resetForm) => {
         let result = await editUser(e)
         if (result.status === 'OK') {
-            editSuccess()
+            editSuccess('update', result.data.email)
             resetForm()
         } else {
-            toast(result.message);
+            openNotification()
         }
 
     }
@@ -54,7 +71,7 @@ export const ModalEditUser = ({ show, close, rawData, editSuccess }) => {
                         <Button onClick={e => {
                             handleSubmit()
                             if (!_.isEmpty(errors)) {
-                                toast("Validation error");
+                                openNotification()
                                 return;
                             }
                             save(values, resetForm)
@@ -72,7 +89,6 @@ export const ModalEditUser = ({ show, close, rawData, editSuccess }) => {
                     ]}
                     width={650}
                 >
-
                     <Form>
                         <Row>
                             <Col span={7} ><Text strong> Email:</Text></Col>
@@ -140,6 +156,7 @@ export const ModalEditUser = ({ show, close, rawData, editSuccess }) => {
                             /></Col>
                         </Row>
                     </Form>
+                    {contextHolder}
                 </Modal>
             )}
         </Formik>

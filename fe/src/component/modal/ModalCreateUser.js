@@ -1,5 +1,4 @@
-import { Button, Col, Modal, Row } from "antd";
-import { Typography } from 'antd';
+import { Button, Col, Modal, Row, Typography } from "antd";
 import { createUser } from "../../api/api";
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
@@ -7,22 +6,22 @@ import _ from 'lodash'
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 const { Text } = Typography;
-const initialValues = {
-    email: '',
-    password: '',
-    firstName: '',
-    lastName: '',
-    country: '',
-    phoneNumber: '',
-    position: ''
-}
-export const ModalCreateUser = ({ show, close, addSuccess }) => {
 
+export const ModalCreateUser = ({ show, close, addSuccess }) => {
+    const initialValues = {
+        email: '',
+        password: '',
+        firstName: '',
+        lastName: '',
+        country: '',
+        phoneNumber: '',
+        position: ''
+    }
     const save = async (e, resetForm) => {
         let result = await createUser(e)
         if (result.status === 'OK') {
             resetForm()
-            addSuccess()
+            addSuccess('create', result.data.email)
         } else {
             toast("Error");
         }
@@ -141,7 +140,6 @@ export const ModalCreateUser = ({ show, close, addSuccess }) => {
                             /></Col>
                         </Row>
                     </Form>
-
                 </Modal>
             )}
         </Formik>
